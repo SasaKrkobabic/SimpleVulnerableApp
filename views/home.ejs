@@ -1,0 +1,27 @@
+<div>
+    <div>
+        <% if (loggedIn) { %>
+            <h1>You are currently logged in as <%= name %></h1>
+        <% } else { %>
+            <h1>You are currently logged out</h1>
+        <% } %>
+        <a href="/login">
+            <button>Login</button>
+        </a>
+        <a href="/logout">
+            <button>Logout</button>
+        </a>
+    </div>
+    <div>
+        <h2>Ranjivost iz prve kategorije:</h2>
+        <h3>1. SQL umetanje</h3>
+
+
+    </div>
+    <div>
+        <h2>Ranjivost iz druge kategorije:</h2>
+        <h3>2. Loša kontrola pristupa</h3>
+    </div>
+</div>
+
+
