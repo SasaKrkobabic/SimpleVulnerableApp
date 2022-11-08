@@ -16,11 +16,21 @@
         <h2>Ranjivost iz prve kategorije:</h2>
         <h3>1. SQL umetanje</h3>
 
+        <p>Upišite vaš jedinstveni broj za dohvat podataka</p>
+        <form action="/getdata" method="post">
+            <input type="text" size="20" id="oib" name="oib">
+            <button type="submit">Dohvati</button>
+        </form>
+
 
     </div>
     <div>
         <h2>Ranjivost iz druge kategorije:</h2>
         <h3>2. Loša kontrola pristupa</h3>
+
+        <form action="/getdata&id=2" method="post">
+            <button type="submit">Vidi svoje podatke</button>
+        </form>
     </div>
 </div>
 
