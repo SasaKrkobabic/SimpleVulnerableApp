@@ -19,6 +19,8 @@
         <p>Upišite vaš jedinstveni broj za dohvat podataka</p>
         <form action="/getdata" method="post">
             <input type="text" size="20" id="oib" name="oib">
+            <input type="checkbox" id="checkbox1" name="checkbox1">
+            <label for="checkbox1">Siguran način</label>
             <button type="submit">Dohvati</button>
         </form>
 
@@ -29,6 +31,8 @@
         <h3>2. Loša kontrola pristupa</h3>
 
         <form action="/getdata&id=2" method="post">
+            <input type="checkbox" id="checkbox2" name="checkbox2">
+            <label for="checkbox2">Siguran način</label>
             <button type="submit">Vidi svoje podatke</button>
         </form>
     </div>
