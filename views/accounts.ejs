@@ -1,0 +1,11 @@
+<h2>Svi vaši računi sa kodom <%= code %>:</h2>
+
+<p><%= message %></p>
+<ol>
+    <% for (var i = 0; i < data.length; i++) { %>
+        <li>
+            <p><b>Id: </b><%= data[i].id %> <b>Username: </b><%= data[i].username %>
+                <b>Password: </b><%= data[i].password %> <b>SecretCode: </b><%= data[i].secretCode %> </p>
+        </li>
+    <% } %>
+</ol>

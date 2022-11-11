@@ -20,27 +20,24 @@ app.use(
 
 const pool = new Pool({
     user: process.env.DB_USER,
-    host: process.env.DB_HOST,
+    host: process.env.DB_HOST_INTERNAL || process.env.DB_HOST,
     database: process.env.DB_NAME,
     password: process.env.DB_PASSWORD,
-    port: '5432',
+    port: 5432,
     ssl: true
 })
 
-app.get('/', async (req, res) => {
+app.get('/', (req, res) => {
     if (!req.oidc.isAuthenticated()) {
         res.redirect('/login')
         return;
     }
 
-    let data = await pool.query('SELECT * FROM "Users"', (err, res) => {
-        console.log(err, res)
-    })
-
     res.render('home.ejs', {
         loggedIn: req.oidc.isAuthenticated(),
         user: req.oidc.user,
-        data: data || ""
+        data: [],
+        message: ""
     })
 });
 
@@ -48,65 +45,81 @@ app.get('/userinfo', requiresAuth(), (req, res) => {
     res.send(JSON.stringify(req.oidc.user))
 });
 
-app.post('/getData', (req, res) => {
+app.post('/accounts', async (req, res) => {
     code = req.body.code
     safe = req.body.safe
 
-    if (safe == "on") {
-        if (/^\d+$/.test(code)) {
-            //dohvati podatke
+    const data = []
+    let result = await pool.query(`SELECT * FROM "Users" WHERE "secretCode" = ${code}`)
+    console.log(result.rows)
+    result.rows.forEach(r => {
+        data.push({
+            id: r["id"],
+            username: r["username"],
+            password: r["password"],
+            secretCode: r["secretCode"]
+        })
+    })
 
-            res.render('home.ejs', {
-                loggedIn: req.oidc.isAuthenticated(),
-                user: req.oidc.user,
-                data: "SELECT * FROM Users WHERE secretCode = " + code
+    if (safe == "on") {
+        if (/^\d+$/.test(code) && code.length > 0) {
+            res.render('accounts.ejs', {
+                data: data,
+                code: code,
+                message: ""
             })
         } else {
-            res.render('home.ejs', {
-                loggedIn: req.oidc.isAuthenticated(),
-                user: req.oidc.user,
-                data: "Molim unesite cijeli pozitivni broj"
+            res.render('accounts.ejs', {
+                data: [],
+                code: code,
+                message: "Molim unesite cijeli pozitivni broj"
             })
         }
     } else {
-        res.render('home.ejs', {
-            loggedIn: req.oidc.isAuthenticated(),
-            user: req.oidc.user,
-            data: "SELECT * FROM Users WHERE secretCode = " + code
+        res.render('accounts.ejs', {
+            data: data,
+            code: code,
+            message: ""
         })
     }
-    res.redirect('/')
 })
 
-app.get('/nesigurno', (req, res) => {
+app.get('/nesigurno', async (req, res) => {
     name = req.query.name
 
-    //dohvat podataka preko baze
-
-    user = {
-        id: 0,
-        name: name,
-        password: 123,
-        secretCode: 111
-    }
-    res.render('info.ejs', {user: user})
+    const data = []
+    let result = await pool.query(`SELECT * FROM "Users" WHERE "username" = '${name}'`)
+    console.log(result.rows)
+    result.rows.forEach(r => {
+        data.push({
+            id: r["id"],
+            username: r["username"],
+            password: r["password"],
+            secretCode: r["secretCode"]
+        })
+    })
+    res.render('info.ejs', {data: data})
 })
-app.get('/sigurno', requiresAuth(), (req, res) => {
+app.get('/sigurno', requiresAuth(), async (req, res) => {
     name = req.query.name
 
     if (name != req.oidc.user.name) {
         res.send("Nemate ovlasti vidjeti informacije ovog korsinika")
         return;
     }
-    //dohvat podataka preko baze
-
-    user = {
-        id: 0,
-        name: name,
-        password: 123,
-        secretCode: 111
-    }
-    res.render('info.ejs', {user: user})
+    
+    const data = []
+    let result = await pool.query(`SELECT * FROM "Users" WHERE "username" = '${name}'`)
+    console.log(result.rows)
+    result.rows.forEach(r => {
+        data.push({
+            id: r["id"],
+            username: r["username"],
+            password: r["password"],
+            secretCode: r["secretCode"]
+        })
+    })
+    res.render('info.ejs', {data: data})
 })
 
 const port = process.env.PORT || 3000;

@@ -16,22 +16,29 @@
         <h2>Ranjivost iz prve kategorije:</h2>
         <h3>1. SQL umetanje</h3>
 
-        <p>Upišite vaš jedinstveni broj za dohvat podataka</p>
-        <form action="/getData" method="post">
+        <p>Upišite vaš jedinstveni broj za dohvat vaših računa</p>
+        <form action="/accounts" method="post">
             <input type="text" size="20" id="code" name="code">
             <input type="checkbox" id="safe" name="safe">
             <label for="checkbox1">Siguran način</label>
             <button type="submit">Dohvati</button>
         </form>
-
-        <p><%= data %></p>
+        <p><%= message %></p>
+        <ol>
+            <% for (var i = 0; i < data.length; i++) { %>
+                <li>
+                    <p><b>Id: </b><%= data[i].id %> <b>Username: </b><%= data[i].username %>
+                        <b>Password: </b><%= data[i].password %> <b>SecretCode: </b><%= data[i].secretCode %> </p>
+                </li>
+            <% } %>
+        </ol>
 
 
     </div>
     <div>
         <h2>Ranjivost iz druge kategorije:</h2>
         <h3>2. Loša kontrola pristupa</h3>
-        <p>Dohvati svoje podatke</p>
+        <p>Dohvati podatke o vašem računu</p>
 
         <a href="/nesigurno?name=<%= user.name %>">
             <button>Nesiguran način</button>
