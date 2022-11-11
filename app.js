@@ -28,14 +28,14 @@ const pool = new Pool({
 })
 
 app.get('/', (req, res) => {
-    if (!req.oidc.isAuthenticated()) {
-        res.redirect('/login')
-        return;
-    }
+    // if (!req.oidc.isAuthenticated()) {
+    //     res.redirect('/login')
+    //     return;
+    // }
 
     res.render('home.ejs', {
         loggedIn: req.oidc.isAuthenticated(),
-        user: req.oidc.user,
+        user: "",//req.oidc.user,
         data: [],
         message: ""
     })
@@ -107,7 +107,7 @@ app.get('/sigurno', requiresAuth(), async (req, res) => {
         res.send("Nemate ovlasti vidjeti informacije ovog korsinika")
         return;
     }
-    
+
     const data = []
     let result = await pool.query(`SELECT * FROM "Users" WHERE "username" = '${name}'`)
     console.log(result.rows)
