@@ -1,7 +1,7 @@
 <div>
     <div>
         <% if (loggedIn) { %>
-            <h1>You are currently logged in as <%= name %></h1>
+            <h1>You are currently logged in as <%= user.name %></h1>
         <% } else { %>
             <h1>You are currently logged out</h1>
         <% } %>
@@ -17,24 +17,29 @@
         <h3>1. SQL umetanje</h3>
 
         <p>Upišite vaš jedinstveni broj za dohvat podataka</p>
-        <form action="/getdata" method="post">
-            <input type="text" size="20" id="oib" name="oib">
-            <input type="checkbox" id="checkbox1" name="checkbox1">
+        <form action="/getData" method="post">
+            <input type="text" size="20" id="code" name="code">
+            <input type="checkbox" id="safe" name="safe">
             <label for="checkbox1">Siguran način</label>
             <button type="submit">Dohvati</button>
         </form>
+
+        <p><%= data %></p>
 
 
     </div>
     <div>
         <h2>Ranjivost iz druge kategorije:</h2>
         <h3>2. Loša kontrola pristupa</h3>
+        <p>Dohvati svoje podatke</p>
 
-        <form action="/getdata&id=2" method="post">
-            <input type="checkbox" id="checkbox2" name="checkbox2">
-            <label for="checkbox2">Siguran način</label>
-            <button type="submit">Vidi svoje podatke</button>
-        </form>
+        <a href="/nesigurno?name=<%= user.name %>">
+            <button>Nesiguran način</button>
+        </a>
+
+        <a href="/sigurno?name=<%= user.name %>">
+            <button>Siguran način</button>
+        </a>
     </div>
 </div>
 
