@@ -3,13 +3,9 @@ const app = express();
 require('dotenv').config();
 const {auth, requiresAuth} = require('express-openid-connect');
 const {Pool} = require('pg')
-const https = require('https')
-const fs = require('fs')
 
 app.set('view-engine', 'ejs')
 app.use(express.urlencoded({extended: false}))
-
-const externalUrl = process.env.RENDER_EXTERNAL_URL;
 
 app.use(
     auth({
@@ -31,21 +27,20 @@ const pool = new Pool({
     ssl: true
 })
 
-pool.query('SELECT NOW()', (err, res) => {
-    console.log(err, res)
-    pool.end()
-})
-
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
     if (!req.oidc.isAuthenticated()) {
         res.redirect('/login')
         return;
     }
 
+    let data = await pool.query('SELECT * FROM "Users"', (err, res) => {
+        console.log(err, res)
+    })
+
     res.render('home.ejs', {
         loggedIn: req.oidc.isAuthenticated(),
         user: req.oidc.user,
-        data: ""
+        data: data || ""
     })
 });
 
@@ -114,20 +109,8 @@ app.get('/sigurno', requiresAuth(), (req, res) => {
     res.render('info.ejs', {user: user})
 })
 
-const port = externalUrl && process.env.PORT ? parseInt(process.env.PORT) : 4080;
+const port = process.env.PORT || 3000;
 
-const options = {
-    key: fs.readFileSync('key.pem'),
-    cert: fs.readFileSync('cert.pem')
-}
-
-if (externalUrl) {
-    const hostname = '127.0.0.1'
-    app.listen(port, hostname, () => {
-        console.log(`Server locally running at http://${hostname}:${port}/ and from outside on ${externalUrl}`);
-    })
-} else {
-    https.createServer(options, app).listen(port, function () {
-        console.log('Server running at https://localhost:' + port + '/')
-    });
-}
+app.listen(port, () => {
+    console.log(`Listening at port ${port}`)
+})
